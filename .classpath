@@ -14,5 +14,7 @@
 	<classpathentry kind="lib" path="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/org.eclipse.ui.workbench_3.107.0.v20150510-1732.jar" sourcepath="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/org.eclipse.ui.workbench_3.107.0.v20150510-1732.jar"/>
 	<classpathentry kind="lib" path="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/com.ibm.icu_54.1.1.v201501272100.jar" sourcepath="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/com.ibm.icu_54.1.1.v201501272100.jar"/>
 	<classpathentry kind="lib" path="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/org.eclipse.ui.forms_3.6.200.v20150506-2029.jar" sourcepath="S:/code/eclipse-jee-mars-R-win32-x86_64/eclipse/plugins/org.eclipse.ui.forms_3.6.200.v20150506-2029.jar"/>
+	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
