@@ -1,45 +1,30 @@
+import java.io.*;
+import javax.swing.*;
 import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.JToggleButton;
 import java.awt.Dimension;
 import java.awt.Component;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
-import javax.swing.JScrollPane;
-import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import javax.swing.JSeparator;
+//import com.google.gson.reflect.TypeToken;
+import java.awt.SystemColor;
+
 
 public class MainWindow {
 
 	private JFrame frmTasksTimer;
 	private static Gson gson = new Gson();
-	
-	
 	private static ArrayList<Task>  tabs = new ArrayList<Task>();
-
 	
-	private long startTime;
+	//put this in the addTab part so each tab has its own timer
+	private Timer timer = new Timer (1000, new timerActionListener(0) );
+	
 	/**
 	 * Launch the application.
 	 */
@@ -74,8 +59,7 @@ public class MainWindow {
 		}
 	}
 	
-	
-	 static void addTab(final JTabbedPane tabbedPane, String label, int h, int m, int s) {
+	private static void addTab(final JTabbedPane tabbedPane, String label, int h, int m, int s) {
 		 	tabs.add(new Task(label, h, m, s));
 		 	JPanel contentPanel = new JPanel();
 		 	contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
@@ -194,7 +178,27 @@ public class MainWindow {
 		  }
 	
 	 
-	
+	private class timerActionListener implements ActionListener {
+		int taskID;
+		
+		public timerActionListener(int taskNo)
+		{
+			taskID = taskNo;
+		}
+		
+		public void actionPerformed (ActionEvent e)
+		{
+			tabs.get(taskID).tick();
+			
+			System.out.println("tick\t"+taskID);
+			System.out.println("Total:\t" + tabs.get(taskID).totalTaskTime() );
+			for (int i=0; i< tabs.get(taskID).getNoLaps(); i++)
+				System.out.println("Lap " + i + ":\t" +tabs.get(taskID).lapToString(i) );
+		}
+		
+
+	}
+
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -237,19 +241,29 @@ public class MainWindow {
 		
 		tabs.add(new Task("foo!", 3,5,21));
 		
-		
+		CloseListener cl = new CloseListener("Are you sure you want to exit the application?",
+			    "Exit Application");
 		
 		frmTasksTimer = new JFrame();
+		frmTasksTimer.setResizable(false);
+		frmTasksTimer.getContentPane().setBackground(SystemColor.windowBorder);
 		frmTasksTimer.setTitle("Tasks Timer");
-		frmTasksTimer.setBounds(100, 100, 450, 344);
-		frmTasksTimer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmTasksTimer.getContentPane().setLayout(new CardLayout(0, 0));
+		frmTasksTimer.setBounds(100, 100, 500, 350);
+		frmTasksTimer.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frmTasksTimer.getContentPane().setLayout(new CardLayout(3, 3));
+		
+		frmTasksTimer.addWindowListener (cl);
+		
+		
 		
 		final JTabbedPane taskTabs = new JTabbedPane(JTabbedPane.TOP);
+		taskTabs.setBorder(null);
+		taskTabs.setBackground(SystemColor.controlHighlight);
 		taskTabs.setFont(new Font("Courier New", Font.PLAIN, 15));
 		
 		
 		final JPanel TASK1 = new JPanel();
+		TASK1.setBorder(null);
 		
 		
 		//temp design code here
@@ -257,6 +271,7 @@ public class MainWindow {
 		
 	 	TASK1.setLayout(new BoxLayout(TASK1, BoxLayout.X_AXIS));
 	 	Box newContentBox = Box.createVerticalBox();
+	 	newContentBox.setBackground(SystemColor.menu);
 	 	TASK1.add(newContentBox);
 	 	
 
@@ -287,12 +302,12 @@ public class MainWindow {
 
 				if (timerToggleButton.isSelected())
 				{
-					
+					timer.start();
 					System.out.println("Starting Timer...");
 				}
 				else 
 				{
-					
+					timer.stop();
 					System.out.println("Stopping Timer...");
 				}
 				

@@ -1,10 +1,15 @@
-public class Lap	{
+import java.util.TimerTask;
+
+public class Lap extends TimerTask	{
 	private int hours;
 	private int minutes;
 	private int seconds;
 	private int lapNumber;
 
-	
+	public void run()
+	{
+		incSeconds(); 
+	}
 	
 	public Lap (int No)
 	{
@@ -22,11 +27,21 @@ public class Lap	{
 	public void incMinutes()
 	{
 		minutes ++;
+		if (minutes >=60)
+		{
+			minutes =0;
+			incHours();
+		}
 	}
 	
 	public void incSeconds()
 	{
 		seconds ++;
+		if (seconds >=60)
+		{
+			seconds =0;
+			incMinutes();
+		}
 	}
 
 	public int getLapNumber()

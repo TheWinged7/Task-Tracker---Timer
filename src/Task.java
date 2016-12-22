@@ -73,4 +73,8 @@ public class Task {
 		return laps.get(n).lapToString();
 	}
 	
+	public void tick()
+	{
+		laps.get(laps.size()-1).incSeconds();
+	}
 }
