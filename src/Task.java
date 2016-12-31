@@ -5,13 +5,13 @@ public class Task {
 	public ArrayList<Lap> laps;
 	public String title;
 	
-	
 	public  Task( String label, int h, int m, int s)
 	{
 		
 		title = label;
 		laps = new ArrayList<Lap>();
 		laps.add(new Lap(0)	);
+		
 	}
 	
 	public void newLap()
@@ -77,4 +77,6 @@ public class Task {
 	{
 		laps.get(laps.size()-1).incSeconds();
 	}
+	
+	
 }

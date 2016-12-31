@@ -21,6 +21,7 @@ public class MainWindow {
 	private JFrame frmTasksTimer;
 	private static Gson gson = new Gson();
 	private static ArrayList<Task>  tabs = new ArrayList<Task>();
+	private static ArrayList<JLabel>  tabTimeLabels = new ArrayList<JLabel>();
 	
 	//put this in the addTab part so each tab has its own timer
 	private Timer timer = new Timer (1000, new timerActionListener(0) );
@@ -134,9 +135,9 @@ public class MainWindow {
 			currentLapBox.add(horizontalStrut_2);
 			
 				
-			JLabel taskTimer = new JLabel(tabs.get(0).totalTaskTime());
-			currentLapBox.add(taskTimer);
-			taskTimer.setFont(new Font("Courier New", Font.BOLD, 25));
+			tabTimeLabels.add(new JLabel(tabs.get(0).totalTaskTime()));
+			currentLapBox.add(tabTimeLabels.get( tabTimeLabels.size()-1));
+			tabTimeLabels.get( tabTimeLabels.size()-1).setFont(new Font("Courier New", Font.BOLD, 25));
 			
 			Component horizontalGlue = Box.createHorizontalGlue();
 			currentLapBox.add(horizontalGlue);
@@ -190,6 +191,8 @@ public class MainWindow {
 		{
 			tabs.get(taskID).tick();
 			
+		//	taskTimer.setText(tabs.get(taskID).totalTaskTime());
+			tabTimeLabels.get(taskID).setText(tabs.get(taskID).totalTaskTime());
 			System.out.println("tick\t"+taskID);
 			System.out.println("Total:\t" + tabs.get(taskID).totalTaskTime() );
 			for (int i=0; i< tabs.get(taskID).getNoLaps(); i++)
@@ -360,9 +363,9 @@ public class MainWindow {
 		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
 		currentLapBox.add(horizontalStrut_2);
 		
-		JLabel taskTimer = new JLabel(tabs.get(0).laps.get(0).lapToString());
-		currentLapBox.add(taskTimer);
-		taskTimer.setFont(new Font("Courier New", Font.BOLD, 25));
+		tabTimeLabels.add(new JLabel(tabs.get(0).totalTaskTime()));
+		currentLapBox.add(tabTimeLabels.get( tabTimeLabels.size()-1));
+		tabTimeLabels.get( tabTimeLabels.size()-1).setFont(new Font("Courier New", Font.BOLD, 25));
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		currentLapBox.add(horizontalGlue);
@@ -405,8 +408,11 @@ public class MainWindow {
 	    
 		
 		/*
+		//this is the default tab, used only to add new tabs
 		taskTabs.addTab("+ Task", null, TASK1, null);
 		
+		
+		//this is the loading of old tabs 
 		String homePath = System.getenv("APPDATA") + "\\TaskTimer";
 		if (new File (homePath+"\\tasks.json").exists())
 		{
