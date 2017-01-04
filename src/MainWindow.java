@@ -330,22 +330,8 @@ public class MainWindow {
 		timerToggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/play.png")));
 		
 		JButton timerLapButton = new JButton("");
-		timerLapButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				tabs.get(0).newLap();
-				
-				
-				/*
-				for (int i=0; i< tabs.get(0).getNoLaps(); i++)
-				{
-					System.out.println(tabs.get(0).laps.get(i).getLapNumber() + "\t-\t" + tabs.get(0).lapToString(i)); 
-				}
-				*/
-				
-			}
-		});
+		
+		
 		currentLapBox.add(timerLapButton);
 		timerLapButton.setMaximumSize(new Dimension(50, 50));
 		timerLapButton.setSize(new Dimension(50, 50));
@@ -379,7 +365,7 @@ public class MainWindow {
 		Box verticalBox = Box.createVerticalBox();
 		scrollPane.setViewportView(verticalBox);
 		
-		Box horizontalBox = Box.createHorizontalBox();
+		final Box horizontalBox = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox);
 		
 		Component horizontalStrut_6 = Box.createHorizontalStrut(20);
@@ -406,6 +392,26 @@ public class MainWindow {
 		
 	    frmTasksTimer.getContentPane().add(taskTabs, "name_6289273657681");
 	    
+	    
+	    timerLapButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				
+				if (tabs.get(0).isLapTimeZero() )
+				{
+					tabs.get(0).newLap(); //replace 0 with correct tab no
+				}
+				
+				JLabel lapTime = new JLabel(tabs.get(0).laps.get(0).lapToString());
+				lapTime.setFont(new Font("Courier New", Font.BOLD, 15));
+				horizontalBox.add(lapTime);
+				
+				Component horizontalGlue_2 = Box.createHorizontalGlue();
+				horizontalBox.add(horizontalGlue_2);
+				
+			}
+		});
 		
 		/*
 		//this is the default tab, used only to add new tabs

@@ -73,10 +73,28 @@ public class Task {
 		return laps.get(n).lapToString();
 	}
 	
+	public String lapToString()
+	{
+		
+		return laps.get(laps.size()-1).lapToString();
+	}
+	
 	public void tick()
 	{
 		laps.get(laps.size()-1).incSeconds();
 	}
 	
-	
+	public boolean isLapTimeZero()
+	{
+				
+		if ( 	laps.get(laps.size()-1).getSeconds() ==0	&&
+				laps.get(laps.size()-1).getMinutes() ==0	&&
+				laps.get(laps.size()-1).getHours() ==0
+				)
+		{
+			return false;
+		}
+		
+		return true;
+	}
 }
