@@ -1,9 +1,13 @@
 import java.io.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.EventQueue;
 import java.awt.Dimension;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+
 //import com.google.gson.reflect.TypeToken;
 import java.awt.SystemColor;
 
@@ -23,8 +29,7 @@ public class MainWindow {
 	private static ArrayList<Task>  tabs = new ArrayList<Task>();
 	private static ArrayList<JLabel>  tabTimeLabels = new ArrayList<JLabel>();
 	
-	//put this in the addTab part so each tab has its own timer
-	private Timer timer = new Timer (1000, new timerActionListener(0) );
+	
 	
 	/**
 	 * Launch the application.
@@ -60,7 +65,27 @@ public class MainWindow {
 		}
 	}
 	
+	static private class timerActionListener implements ActionListener {
+		int taskID;
+		
+		public timerActionListener(int taskNo)
+		{
+			taskID = taskNo;
+		}
+		
+		public void actionPerformed (ActionEvent e)
+		{
+			tabs.get(taskID).tick();
+			tabTimeLabels.get(taskID).setText(tabs.get(taskID).totalTaskTime());
+		}
+		
+
+	}
+	
 	private static void addTab(final JTabbedPane tabbedPane, String label, int h, int m, int s) {
+		
+		
+			final Timer timer = new Timer (100, new timerActionListener(tabs.size()) );
 		 	tabs.add(new Task(label, h, m, s));
 		 	JPanel contentPanel = new JPanel();
 		 	contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
@@ -106,7 +131,7 @@ public class MainWindow {
 			Component horizontalStrut_4 = Box.createHorizontalStrut(20);
 			currentLapBox.add(horizontalStrut_4);
 			
-			JToggleButton timerToggleButton = new JToggleButton("");
+			final JToggleButton timerToggleButton = new JToggleButton("");
 			currentLapBox.add(timerToggleButton);
 			timerToggleButton.setFocusable(false);
 			timerToggleButton.setPreferredSize(new Dimension(50, 50));
@@ -116,21 +141,29 @@ public class MainWindow {
 			timerToggleButton.setBorderPainted(false);
 			timerToggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/play.png")));
 			
-			JButton timerLapButton = new JButton("");
-			currentLapBox.add(timerLapButton);
-			timerLapButton.setMaximumSize(new Dimension(50, 50));
-			timerLapButton.setSize(new Dimension(50, 50));
-			timerLapButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-			timerLapButton.setFocusable(false);
-			timerLapButton.setPreferredSize(new Dimension(50, 50));
-			timerLapButton.setMinimumSize(new Dimension(50, 50));
-			timerLapButton.setPressedIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/lap_pressed.png")));
-			timerLapButton.setOpaque(false);
-			timerLapButton.setContentAreaFilled(false);
-			timerLapButton.setBorderPainted(false);
-			timerLapButton.setBorder(null);
-			timerLapButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/lap.png")));
+			timerToggleButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+
+					if (timerToggleButton.isSelected())
+					{
+						timer.start();
+						System.out.println("Starting Timer...");
+					}
+					else 
+					{
+						timer.stop();
+						System.out.println("Stopping Timer...");
+					}
+					
+				}
+			}	);
 			
+			/*
+			 final JToggleButton timerToggleButton = new JToggleButton("");
+				
+			 */
+						
 			Component horizontalStrut_2 = Box.createHorizontalStrut(20);
 			currentLapBox.add(horizontalStrut_2);
 			
@@ -141,36 +174,7 @@ public class MainWindow {
 			
 			Component horizontalGlue = Box.createHorizontalGlue();
 			currentLapBox.add(horizontalGlue);
-			
-			Component verticalGlue_1 = Box.createVerticalGlue();
-			newContentBox.add(verticalGlue_1);
-			
-			JScrollPane scrollPane = new JScrollPane();
-			newContentBox.add(scrollPane);
-			
-			Box verticalBox = Box.createVerticalBox();
-			scrollPane.setViewportView(verticalBox);
-			
-			Box horizontalBox = Box.createHorizontalBox();
-			verticalBox.add(horizontalBox);
-			
-			Component horizontalStrut_6 = Box.createHorizontalStrut(20);
-			horizontalBox.add(horizontalStrut_6);
-			
-			JLabel lapNumLabel = new JLabel("#");
-			lapNumLabel.setFont(new Font("Courier New", Font.BOLD, 15));
-			horizontalBox.add(lapNumLabel);
-			
-			Component horizontalStrut_3 = Box.createHorizontalStrut(20);
-			horizontalBox.add(horizontalStrut_3);
-			
-			JLabel lapTime = new JLabel(tabs.get(0).laps.get(0).lapToString());
-			lapTime.setFont(new Font("Courier New", Font.BOLD, 15));
-			horizontalBox.add(lapTime);
-			
-			Component horizontalGlue_2 = Box.createHorizontalGlue();
-			horizontalBox.add(horizontalGlue_2);
-			
+						
 		    
 		    tabbedPane.addTab(label , null, contentPanel, label);
 		    int tab = tabbedPane.indexOfTab(label);
@@ -179,28 +183,7 @@ public class MainWindow {
 		  }
 	
 	 
-	private class timerActionListener implements ActionListener {
-		int taskID;
-		
-		public timerActionListener(int taskNo)
-		{
-			taskID = taskNo;
-		}
-		
-		public void actionPerformed (ActionEvent e)
-		{
-			tabs.get(taskID).tick();
-			
-		//	taskTimer.setText(tabs.get(taskID).totalTaskTime());
-			tabTimeLabels.get(taskID).setText(tabs.get(taskID).totalTaskTime());
-			System.out.println("tick\t"+taskID);
-			System.out.println("Total:\t" + tabs.get(taskID).totalTaskTime() );
-			for (int i=0; i< tabs.get(taskID).getNoLaps(); i++)
-				System.out.println("Lap " + i + ":\t" +tabs.get(taskID).lapToString(i) );
-		}
-		
 
-	}
 
 	
 	public static void main(String[] args) {
@@ -242,7 +225,7 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		
-		tabs.add(new Task("foo!", 3,5,21));
+		//tabs.add(new Task("foo!", 3,5,21));
 		
 		CloseListener cl = new CloseListener("Are you sure you want to exit the application?",
 			    "Exit Application");
@@ -270,7 +253,7 @@ public class MainWindow {
 		
 		
 		//temp design code here
-		
+		/*
 		
 	 	TASK1.setLayout(new BoxLayout(TASK1, BoxLayout.X_AXIS));
 	 	Box newContentBox = Box.createVerticalBox();
@@ -298,56 +281,12 @@ public class MainWindow {
 		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
 		currentLapBox.add(horizontalStrut_4);
 		
-		final JToggleButton timerToggleButton = new JToggleButton("");
-		timerToggleButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				if (timerToggleButton.isSelected())
-				{
-					timer.start();
-					System.out.println("Starting Timer...");
-				}
-				else 
-				{
-					timer.stop();
-					System.out.println("Stopping Timer...");
-				}
-				
-			}
-		});
 		
 		
 		
 		
-		currentLapBox.add(timerToggleButton);
-		timerToggleButton.setFocusable(false);
-		timerToggleButton.setPreferredSize(new Dimension(50, 50));
-		timerToggleButton.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/pause.png")));
-		timerToggleButton.setBorder(null);
-		timerToggleButton.setContentAreaFilled(false);
-		timerToggleButton.setBorderPainted(false);
-		timerToggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/play.png")));
-		
-		JButton timerLapButton = new JButton("");
 		
 		
-		currentLapBox.add(timerLapButton);
-		timerLapButton.setMaximumSize(new Dimension(50, 50));
-		timerLapButton.setSize(new Dimension(50, 50));
-		timerLapButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		timerLapButton.setFocusable(false);
-		timerLapButton.setPreferredSize(new Dimension(50, 50));
-		timerLapButton.setMinimumSize(new Dimension(50, 50));
-		timerLapButton.setPressedIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/lap_pressed.png")));
-		timerLapButton.setOpaque(false);
-		timerLapButton.setContentAreaFilled(false);
-		timerLapButton.setBorderPainted(false);
-		timerLapButton.setBorder(null);
-		timerLapButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/buttons/lap.png")));
-		
-		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
-		currentLapBox.add(horizontalStrut_2);
 		
 		tabTimeLabels.add(new JLabel(tabs.get(0).totalTaskTime()));
 		currentLapBox.add(tabTimeLabels.get( tabTimeLabels.size()-1));
@@ -356,69 +295,22 @@ public class MainWindow {
 		Component horizontalGlue = Box.createHorizontalGlue();
 		currentLapBox.add(horizontalGlue);
 		
-		Component verticalGlue_1 = Box.createVerticalGlue();
-		newContentBox.add(verticalGlue_1);
-		
 		JScrollPane scrollPane = new JScrollPane();
 		newContentBox.add(scrollPane);
 		
-		Box verticalBox = Box.createVerticalBox();
-		scrollPane.setViewportView(verticalBox);
-		
-		final Box horizontalBox = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox);
-		
-		Component horizontalStrut_6 = Box.createHorizontalStrut(20);
-		horizontalBox.add(horizontalStrut_6);
-		
-		JLabel lapNumLabel = new JLabel(Integer.toBinaryString( tabs.get(0).laps.get(0).getLapNumber() ) );
-		lapNumLabel.setFont(new Font("Courier New", Font.BOLD, 15));
-		horizontalBox.add(lapNumLabel);
-		
-		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
-		horizontalStrut_3.setFocusable(false);
-		horizontalBox.add(horizontalStrut_3);
-		
-		
-		JLabel lapTime = new JLabel(tabs.get(0).laps.get(0).lapToString());
-		lapTime.setFont(new Font("Courier New", Font.BOLD, 15));
-		horizontalBox.add(lapTime);
-		
-		Component horizontalGlue_2 = Box.createHorizontalGlue();
-		horizontalBox.add(horizontalGlue_2);
-		
 	    
 	    taskTabs.addTab(tabs.get(0).title , null, TASK1, tabs.get(0).title);
+		*/
 		
 	    frmTasksTimer.getContentPane().add(taskTabs, "name_6289273657681");
-	    
-	    
-	    timerLapButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				
-				if (tabs.get(0).isLapTimeZero() )
-				{
-					tabs.get(0).newLap(); //replace 0 with correct tab no
-				}
-				
-				JLabel lapTime = new JLabel(tabs.get(0).laps.get(0).lapToString());
-				lapTime.setFont(new Font("Courier New", Font.BOLD, 15));
-				horizontalBox.add(lapTime);
-				
-				Component horizontalGlue_2 = Box.createHorizontalGlue();
-				horizontalBox.add(horizontalGlue_2);
-				
-			}
-		});
 		
-		/*
+		
 		//this is the default tab, used only to add new tabs
 		taskTabs.addTab("+ Task", null, TASK1, null);
 		
 		
 		//this is the loading of old tabs 
+		//should be put into a function of its own later
 		String homePath = System.getenv("APPDATA") + "\\TaskTimer";
 		if (new File (homePath+"\\tasks.json").exists())
 		{
@@ -427,13 +319,14 @@ public class MainWindow {
 				BufferedReader br = new BufferedReader 
 							(new FileReader(homePath+"\\tasks.json") );
 				
+				//currently having issues loading the old tabs from the json file that it saved
 				oldTabs = gson.fromJson(br, new TypeToken<ArrayList<String>>()
 						{}.getType() );
 
 				for (int i=0; i<oldTabs.size(); i++)
 				{
 					System.out.println(oldTabs.get(i) + "\t" + i);
-					addTab(taskTabs, oldTabs.get(i));
+					//addTab(taskTabs, oldTabs.get(i));
 				}
 				
 				} catch(IOException err)
@@ -472,7 +365,7 @@ public class MainWindow {
 				String title = (String) JOptionPane.showInputDialog("Please input task name", null);
 				if (checkTitle(title))
 				{
-					addTab(taskTabs, title);
+					addTab(taskTabs, title, 0, 0, 0);
 					
 					
 				}
@@ -491,7 +384,7 @@ public class MainWindow {
 					String title = (String) JOptionPane.showInputDialog("Please input task name", null);
 					if (checkTitle(title))
 					{
-						addTab(taskTabs, title);
+						addTab(taskTabs, title, 0, 0, 0);
 						
 						
 					}
@@ -500,7 +393,7 @@ public class MainWindow {
 			}
 			
 		});
-	*/
+	
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 

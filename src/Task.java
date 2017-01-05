@@ -1,44 +1,30 @@
-import java.util.ArrayList;
 
 public class Task {
 	
-	public ArrayList<Lap> laps;
+	private Lap lap;
 	public String title;
 	
 	public  Task( String label, int h, int m, int s)
 	{
 		
 		title = label;
-		laps = new ArrayList<Lap>();
-		laps.add(new Lap(0)	);
+		lap = new Lap();
+
 		
 	}
 	
-	public void newLap()
-	{
-		int lapNo = laps.size();
-		laps.add(new Lap(lapNo) );
-	}
+	
 		
-	public int getNoLaps()
-	{
-		
-		return laps.size();
-	}
 	
 	public String totalTaskTime()
 	{
 		String total="";
-		int h=0, m=0, s=0;
+		int h, m, s;
 		
-		for (Lap l : laps)
-		{
-			h+=l.getHours();
-			m+=l.getMinutes();
-			s+=l.getSeconds();
-		}
-		
-		
+		h=lap.getHours();
+		m=lap.getMinutes();
+		s=lap.getSeconds();
+			
 		if (h<10)
 		{
 			total += "0" + h  +":";
@@ -66,30 +52,24 @@ public class Task {
 		
 		return total;
 	}
-	
-	public String lapToString(int n)
-	{
 		
-		return laps.get(n).lapToString();
-	}
-	
 	public String lapToString()
 	{
 		
-		return laps.get(laps.size()-1).lapToString();
+		return lap.lapToString();
 	}
 	
 	public void tick()
 	{
-		laps.get(laps.size()-1).incSeconds();
+		lap.incMillis();
 	}
 	
 	public boolean isLapTimeZero()
 	{
 				
-		if ( 	laps.get(laps.size()-1).getSeconds() ==0	&&
-				laps.get(laps.size()-1).getMinutes() ==0	&&
-				laps.get(laps.size()-1).getHours() ==0
+		if ( 	lap.getSeconds() ==0	&&
+				lap.getMinutes() ==0	&&
+				lap.getHours() ==0
 				)
 		{
 			return false;
