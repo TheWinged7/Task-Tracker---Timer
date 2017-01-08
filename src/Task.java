@@ -1,75 +1,125 @@
 
 public class Task {
 	
-	private Lap lap;
-	public String title;
+	private String title;
+	private int hours;
+	private int minutes;
+	private int seconds;
+	private int millis;
+	
 	
 	public  Task( String label, int h, int m, int s)
 	{
 		
 		title = label;
-		lap = new Lap();
-
-		
+		hours =h;
+		minutes=m;
+		seconds=s;
+		millis=0;
 	}
 	
 	
+	private void incHours()
+	{
+		hours ++;
+	}
+	
+	private void incMinutes()
+	{
+		minutes ++;
+		if (minutes >=60)
+		{
+			minutes =0;
+			incHours();
+		}
+	}
+	
+	private void incSeconds()
+	{
+		seconds ++;
+		if (seconds >=60)
+		{
+			seconds =0;
+			incMinutes();
+		}
+	}
+	
+	private void incMillis()
+	{
+		millis ++;
+		if (millis >=10)
+		{
+			millis =0;
+			incSeconds();
+		}
+	}
 		
 	
 	public String totalTaskTime()
 	{
 		String total="";
-		int h, m, s;
-		
-		h=lap.getHours();
-		m=lap.getMinutes();
-		s=lap.getSeconds();
+	
 			
-		if (h<10)
+		if (hours<10)
 		{
-			total += "0" + h  +":";
+			total += "0" + hours  +":";
 		}
 		else
 		{
-			total +=  h +":";
+			total +=  hours +":";
 		}
-		if (m<10)
+		if (minutes<10)
 		{
-			total += "0" + m +":";
-		}
-		else
-		{
-			total +=  m +":";
-		}
-		if (s<10)
-		{
-			total += "0" + s;
+			total += "0" + minutes +":";
 		}
 		else
 		{
-			total +=  s;
+			total +=  minutes +":";
+		}
+		if (seconds<10)
+		{
+			total += "0" + seconds;
+		}
+		else
+		{
+			total +=  seconds;
 		}
 		
 		return total;
 	}
-		
-	public String lapToString()
+
+	public String getTitle()
 	{
-		
-		return lap.lapToString();
+		return title;
+	}
+
+	
+	public int getSeconds()
+	{
+		return seconds;
+	}
+	
+	public int getMinutes()
+	{
+		return minutes;
+	}
+	
+	public int getHours()
+	{
+		return hours;
 	}
 	
 	public void tick()
 	{
-		lap.incMillis();
+		incMillis();
 	}
 	
 	public boolean isLapTimeZero()
 	{
 				
-		if ( 	lap.getSeconds() ==0	&&
-				lap.getMinutes() ==0	&&
-				lap.getHours() ==0
+		if ( 	seconds ==0	&&
+				minutes ==0	&&
+				hours ==0
 				)
 		{
 			return false;
