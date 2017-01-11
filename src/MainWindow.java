@@ -1,18 +1,8 @@
 import java.io.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import java.awt.EventQueue;
-import java.awt.Dimension;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import com.google.gson.*;
@@ -25,7 +15,7 @@ import java.awt.SystemColor;
 public class MainWindow {
 
 	private JFrame frmTasksTimer;
-	final JTabbedPane taskTabs = new JTabbedPane(JTabbedPane.TOP);
+	final static JTabbedPane taskTabs = new JTabbedPane(JTabbedPane.TOP);
 	private static Gson gson = new Gson();
 	private static ArrayList<Task>  tabs = new ArrayList<Task>();
 	private static ArrayList<JLabel>  tabTimeLabels = new ArrayList<JLabel>();
@@ -83,7 +73,7 @@ public class MainWindow {
 
 	}
 	
-	private static void addTab(final JTabbedPane tabbedPane, String label, int h, int m, int s) {
+	private static void addTab(final JTabbedPane tabbedPane, final String label, int h, int m, int s) {
 		
 		
 			final Timer timer = new Timer (100, new timerActionListener(tabs.size()) );
@@ -112,10 +102,21 @@ public class MainWindow {
 			taskCreateButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					//need to make this check which task this is, 
-					//and then delete it from both task and taskLabel arrays, 
-					//as well as remove its tab.
-
+										
+					for (int i=0; i< tabs.size(); i++)
+					{
+						
+						if (tabs.get(i).getTitle() == label )
+						{
+							tabs.remove(i);
+							tabTimeLabels.remove(i);
+							taskTabs.removeTabAt(
+									taskTabs.getSelectedIndex() );
+							
+							System.out.println("Found it!");
+							break;
+						}
+					}
 				}
 			});
 			taskNameBox.add(taskCreateButton);
