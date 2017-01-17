@@ -57,12 +57,6 @@ public class MainWindow {
 			JOptionPane.showMessageDialog(null, "ERROR:\nTitle must contain at least one character other than space", "Title Error!", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		/*
-		else if(alreadyExists) //if the title already exists exactly, display error popup and return false
-		{
-			JOptionPane.showMessageDialog(null, "ERROR:\nTask with that title already exists", "Title Error!", JOptionPane.WARNING_MESSAGE);
-			return false;
-		}*/
 		else //if none of the above are true, return true
 		{
 			return true;
@@ -420,21 +414,41 @@ public class MainWindow {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
-				if (frmTasksTimer.getState() == java.awt.Frame.NORMAL)
-				{
-					frmTasksTimer.toBack();
-					frmTasksTimer.setState(java.awt.Frame.ICONIFIED);
-				}
-				else if (frmTasksTimer.getState() == java.awt.Frame.ICONIFIED)
-				{
-					frmTasksTimer.toFront();
-					frmTasksTimer.repaint();
-					frmTasksTimer.setState(java.awt.Frame.NORMAL);
-				}
+				if (e.getClickCount() == 2 && !e.isConsumed()) {
+				     e.consume();
+				     //handle double click event.
 				
+				     if (frmTasksTimer.getState() == java.awt.Frame.NORMAL && SwingUtilities.isLeftMouseButton(e) )
+				     {
+				    	 frmTasksTimer.toBack();
+				    	 frmTasksTimer.setState(java.awt.Frame.ICONIFIED);
+				     }
+				     else if (frmTasksTimer.getState() == java.awt.Frame.ICONIFIED && SwingUtilities.isLeftMouseButton(e))
+				     {
+				    	 frmTasksTimer.toFront();
+				    	 frmTasksTimer.repaint();
+						frmTasksTimer.setState(java.awt.Frame.NORMAL);
+				     }
+				}
 
 			}
+			
+			
 		});
+		
+		/*
+		trayIcon.addMouseMotionListener(new MouseAdapter() {
+			private Timer popupTimer;
+			private JWindow bubble;
+			private Point point;
+			
+			@Override
+			public void 
+			
+		
+		});
+		*/
+		
 		
 		if (SystemTray.isSupported())
 		{
